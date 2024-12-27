@@ -26,8 +26,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-app.use("/api/users", userRoutes);
-app.use("/api/meetings", meetingRoutes);
+app.use("/users", userRoutes);
+app.use("/meetings", meetingRoutes);
 
 connectDB();
 
