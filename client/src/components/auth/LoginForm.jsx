@@ -1,17 +1,30 @@
-import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import axios from "axios";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router";
+
+const backendURL = import.meta.env.VITE_BACKEND_URL;
 
 export const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const response = await axios.post(
+        backendURL + "/api/users/login",
+        { email, password },
+        { withCredentials: true }
+      );
+
+      const userData = response.data;
+      setUser(userData);
+      navigate("/");
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     }
   };
 
@@ -22,7 +35,10 @@ export const LoginForm = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-blue-500">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-blue-500"
+              >
                 Email address
               </label>
               <input
@@ -35,7 +51,10 @@ export const LoginForm = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-blue-500">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-blue-500"
+              >
                 Password
               </label>
               <input
@@ -50,7 +69,7 @@ export const LoginForm = () => {
           </div>
           <button
             type="submit"
-            className='bg-blue-400 text-white px-4 py-2 rounded-md font-bold'
+            className="bg-blue-400 text-white px-4 py-2 rounded-md font-bold"
           >
             Sign in
           </button>

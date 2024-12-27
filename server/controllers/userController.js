@@ -1,24 +1,24 @@
-import User from '../models/User.js';
-import generateToken from '../utils/generateToken.js';
-import bcrypt from 'bcryptjs'
+import User from "../models/User.js";
+import generateToken from "../utils/generateToken.js";
+import bcrypt from "bcryptjs";
 const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const user = await User.create({
       username: username,
-      email : email,
-      password : hashedPassword
+      email: email,
+      password: hashedPassword,
     });
 
-    res.cookie("token" , generateToken(user._id));
+    res.cookie("token", generateToken(user._id));
     res.status(201).json({
       _id: user._id,
       username: user.username,
@@ -41,10 +41,10 @@ const loginUser = async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.username, user.email);
     res.cookie("token", token);
     res.json({
-      _id: user._id,
+      id: user._id,
       username: user.username,
       email: user.email,
     });
@@ -56,7 +56,7 @@ const loginUser = async (req, res) => {
 const checkUser = (req, res) => {
   if (req.user) {
     res.json({
-      _id: req.user._id,
+      id: req.user.id,
       username: req.user.username,
       email: req.user.email,
     });
@@ -65,13 +65,13 @@ const checkUser = (req, res) => {
   }
 };
 
-const logoutUser = async (req, res) =>{
-  try{
-    res.clearCookie('token')
-    res.send("Logged Out Succesfully")
-  }catch(error){
-    res.status(500).json({message : error.message})
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.send("Logged Out Succesfully");
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
-export { registerUser, loginUser , logoutUser , checkUser };
+export { registerUser, loginUser, logoutUser, checkUser };

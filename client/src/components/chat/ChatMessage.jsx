@@ -2,7 +2,7 @@
 const ChatMessage = ({ message, isOwnMessage }) => {
   return (
     <div className={`flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
-      <span className="text-sm text-gray-500">{message.sender.name}</span>
+      <span className="text-sm text-gray-500">{message.sender.username}</span>
       <div className={`mt-1 px-4 py-2 rounded-lg ${
         isOwnMessage ? 'bg-blue-500 text-white' : 'bg-gray-100'
       }`}>

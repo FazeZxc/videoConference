@@ -1,29 +1,45 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Video, LogOut } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { useRecoilValue } from "recoil";
+import { userAtom } from "../store/Index";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const user = useRecoilValue(userAtom);
   const [meetingId, setMeetingId] = useState("");
   const createMeeting = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/meetings/create", {
-        withCredentials: true
-      });
-
-      const data = await response.data;
+      const response = await axios.get(
+        "http://localhost:5000/api/meetings/create",
+        {
+          withCredentials: true,
+        }
+      );
+      const data = response.data;
       navigate(`/meeting/${data.meetingId}`);
     } catch (error) {
       console.error("Error creating meeting:", error);
     }
   };
 
-  const joinMeeting = () => {
-    if (meetingId.trim()) {
-      navigate(`/meeting/${meetingId}`);
+  const joinMeeting = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/meetings/join/${meetingId}`,
+        user,
+        {
+          withCredentials: true,
+        }
+      );
+      const data = response.data;
+      console.log();
+      if (data.isActive) {
+        navigate(`/meeting/${data.meetingId}`);
+      }
+    } catch (error) {
+      console.error("meeting not found:", error);
     }
   };
 
@@ -38,7 +54,7 @@ const Home = () => {
           <div className="flex items-center space-x-4">
             <span className="text-gray-700 font-medium">{user?.username}</span>
             <button
-              onClick={logout}
+              // onClick={logout}
               className="p-2 rounded-full hover:bg-gray-100 transition"
             >
               <LogOut className="w-6 h-6 text-gray-600" />

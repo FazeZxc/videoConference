@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
-import ChatMessage from './ChatMessage';
-import { Send } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import ChatMessage from "./ChatMessage";
+import { Send } from "lucide-react";
 /* eslint-disable react/prop-types */
 
 const ChatWindow = ({ messages, onSendMessage, currentUserId }) => {
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(scrollToBottom, [messages]);
@@ -17,23 +17,22 @@ const ChatWindow = ({ messages, onSendMessage, currentUserId }) => {
     e.preventDefault();
     if (newMessage.trim()) {
       onSendMessage(newMessage);
-      setNewMessage('');
+      setNewMessage("");
     }
   };
-
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col pb-[5rem] h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
+        {messages.map((item, index) => (
           <ChatMessage
-            key={message._id}
-            message={message}
-            isOwnMessage={message.sender._id === currentUserId}
+            key={index}
+            message={item.message}
+            isOwnMessage={item.message.sender.id === currentUserId}
           />
         ))}
         <div ref={messagesEndRef} />
       </div>
-      
+
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex items-center space-x-2">
           <input

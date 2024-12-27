@@ -1,10 +1,10 @@
-import { useRecoilValue } from "recoil";
-import { userAtom } from "../store/Index";
 import { useNavigate } from "react-router";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 // eslint-disable-next-line react/prop-types
 export const ProtectedRoute = ({ children }) => {
-  const user = useRecoilValue(userAtom);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   return user ? (
     children
